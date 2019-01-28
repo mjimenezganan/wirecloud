@@ -46,6 +46,7 @@ var styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/PaginatedSource.js',
     'wirecloud/commons/static/js/StyledElements/GUIBuilder.js',
     'wirecloud/commons/static/js/StyledElements/Tooltip.js',
+    'wirecloud/commons/static/js/StyledElements/Alert.js',
     'wirecloud/commons/static/js/StyledElements/Addon.js',
     'wirecloud/commons/static/js/StyledElements/Button.js',
     'wirecloud/commons/static/js/StyledElements/FileButton.js',
@@ -87,7 +88,8 @@ var styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/DefaultInputInterfaceFactory.js',
     'wirecloud/commons/static/js/StyledElements/Form.js',
     'wirecloud/commons/static/js/StyledElements/PaginationInterface.js',
-    'wirecloud/commons/static/js/StyledElements/Popover.js'
+    'wirecloud/commons/static/js/StyledElements/Popover.js',
+    'wirecloud/commons/static/js/StyledElements/Panel.js'
 ];
 
 var wc_dependencies = [
@@ -113,16 +115,21 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/LocalCatalogue.js',
     'wirecloud/platform/static/js/wirecloud/PersistentVariableDef.js',
     'wirecloud/platform/static/js/wirecloud/PersistentVariable.js',
+    'wirecloud/platform/static/js/wirecloud/Preferences.js',
     'wirecloud/platform/static/js/wirecloud/UserPrefDef.js',
     'wirecloud/platform/static/js/wirecloud/UserPref.js',
     'wirecloud/platform/static/js/wirecloud/Version.js',
     'wirecloud/platform/static/js/wirecloud/Widget.js',
     'wirecloud/platform/static/js/wirecloud/Wiring.js',
     'wirecloud/platform/static/js/wirecloud/Workspace.js',
+    'wirecloud/platform/static/js/wirecloud/wiring/KeywordSuggestion.js',
     'wirecloud/platform/static/js/wirecloud/wiring/Operator.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Behaviour.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Endpoint.js',
-    'wirecloud/platform/static/js/wirecloud/wiring/KeywordSuggestion.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/KeywordSuggestion.js',
+    'wirecloud/platform/static/js/wirecloud/ui/SharingWindowMenu.js',
     'wirecloud/platform/static/js/wirecloud/wiring/Endpoint.js',
     'wirecloud/platform/static/js/wirecloud/wiring/EndpointTypeError.js',
     'wirecloud/platform/static/js/wirecloud/wiring/EndpointValueError.js',

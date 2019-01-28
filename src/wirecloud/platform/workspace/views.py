@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from io import BytesIO
 import json
 import os
@@ -28,7 +26,6 @@ from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from six import string_types
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
@@ -253,14 +250,18 @@ class TabCollection(Resource):
         workspace = get_object_or_404(Workspace, pk=workspace_id)
         data = parse_json_request(request)
 
-        if 'name' not in data and 'title' not in data:
+        tab_name = data.get('name', '').strip()
+        tab_title = data.get('title', '').strip()
+
+        if tab_name == '' and tab_title == '':
             return build_error_response(request, 422, _('Malformed tab JSON: expecting tab name or title.'))
 
         if not (request.user.is_superuser or workspace.creator == request.user):
             return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
-        tab_title = data.get('title')
-        tab_name = data.get('name')
+        if tab_title == '':
+            tab_title = tab_name
+
         try:
             tab = createTab(tab_title, workspace, name=tab_name)
         except IntegrityError:
@@ -322,7 +323,7 @@ class TabEntry(Resource):
 
         if 'visible' in data:
             visible = data['visible']
-            if isinstance(visible, string_types):
+            if isinstance(visible, str):
                 visible = visible.strip().lower()
                 if visible not in ('true', 'false'):
                     return build_error_response(request, 422, _('Invalid visible value'))

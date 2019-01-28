@@ -17,13 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from io import BytesIO
 import os
 import json
-from six.moves.urllib.parse import urljoin
-from six.moves.urllib.request import pathname2url, url2pathname
+from urllib.parse import urljoin
+from urllib.request import pathname2url, url2pathname
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -122,6 +120,8 @@ class ResourceCollection(Resource):
 
         if not filters['orderby'].replace('-', '', 1) in ['creation_date', 'name', 'vendor']:
             return build_error_response(request, 400, _('Orderby value not supported: %s') % filters['orderby'])
+        # This api only supports ordering by one field, but the searcher supports ordering by multiple fields
+        filters['orderby'] = [filters['orderby']]
 
         if filters['scope']:
             filters['scope'] = filters['scope'].split(',')

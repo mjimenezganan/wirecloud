@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 import filecmp
 import json
 from lxml import etree
@@ -28,7 +26,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.test import Client, TestCase, TransactionTestCase
 from mock import Mock, patch
-import six
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
@@ -462,7 +459,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertEqual(response_data['name'], 'test')
         self.assertEqual(response_data['title'], 'test')
         self.assertTrue(isinstance(response_data['wiring'], dict))
@@ -488,7 +485,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertEqual(response_data['name'], 'new-workspace')
         self.assertEqual(response_data['title'], 'nÉw wörkspace')
         self.assertTrue(isinstance(response_data['wiring'], dict))
@@ -622,7 +619,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertNotEqual(response_data['name'], 'ExistingWorkspace')
         self.assertTrue(isinstance(response_data['wiring'], dict))
 
@@ -700,7 +697,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertEqual(response_data['name'], 'test-mashup')
         self.assertEqual(response_data['title'], 'Test Mashup')
         self.assertTrue(isinstance(response_data['wiring'], dict))
@@ -732,7 +729,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertEqual(response_data['name'], 'test')
         self.assertTrue(isinstance(response_data['wiring'], dict))
         self.assertEqual(response_data['preferences']['password_param'], {'inherit': False, 'value': 'password from api'})
@@ -890,7 +887,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertFalse(response_data['shared'])
         self.assertEqual(response_data['name'], 'ExistingWorkspace')
         self.assertEqual(response_data['owner'], 'user_with_workspaces')
@@ -903,7 +900,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         self.assertTrue(len(response_data['tabs']) > 0)
         self.assertTrue(isinstance(response_data['tabs'][0], dict))
         self.assertTrue('id' in response_data['tabs'][0])
-        self.assertTrue(isinstance(response_data['tabs'][0]['id'], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data['tabs'][0]['id'], str))  # id must be an string
         self.assertTrue('name' in response_data['tabs'][0])
         self.assertTrue('preferences' in response_data['tabs'][0])
         self.assertTrue(isinstance(response_data['tabs'][0]['preferences'], dict))
@@ -929,7 +926,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertTrue(response_data['shared'])
         self.assertEqual(response_data['name'], 'public-workspace')
         self.assertEqual(response_data['title'], 'Public Workspace')
@@ -1434,7 +1431,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
             response_data = json.loads(response.content.decode('utf-8'))
             self.assertTrue(isinstance(response_data, dict))
             self.assertIn("id", response_data)
-            self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+            self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
             self.assertEqual(response_data['name'], 'rest_api_test')
             self.assertEqual(response_data['title'], 'rest_api_test')
             self.assertEqual(response_data['iwidgets'], [])
@@ -1443,7 +1440,64 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
             self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
         check_cache_is_purged(self, 1, create_workspace_tab)
 
-    def test_tab_collection_post_title(self):
+    def test_tab_collection_post(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def create_workspace_tab():
+            data = {
+                'name': 'rest_api_test',
+                'title': 'Rest API Test'
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 201)
+
+            # Check basic response structure
+            response_data = json.loads(response.content.decode('utf-8'))
+            self.assertTrue(isinstance(response_data, dict))
+            self.assertIn("id", response_data)
+            self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
+            self.assertEqual(response_data['name'], 'rest_api_test')
+            self.assertEqual(response_data['title'], 'Rest API Test')
+            self.assertEqual(response_data['iwidgets'], [])
+
+            # Tab should be created
+            self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
+        check_cache_is_purged(self, 1, create_workspace_tab)
+
+    def test_tab_collection_post_only_name(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def create_workspace_tab():
+            data = {
+                'name': 'rest_api_test',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 201)
+
+            # Check basic response structure
+            response_data = json.loads(response.content.decode('utf-8'))
+            self.assertTrue(isinstance(response_data, dict))
+            self.assertIn("id", response_data)
+            self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
+            self.assertEqual(response_data['name'], 'rest_api_test')
+            self.assertEqual(response_data['title'], 'rest_api_test')
+            self.assertEqual(response_data['iwidgets'], [])
+
+            # Tab should be created
+            self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
+        check_cache_is_purged(self, 1, create_workspace_tab)
+
+    def test_tab_collection_post_only_title(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
 
@@ -1462,7 +1516,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
             response_data = json.loads(response.content.decode('utf-8'))
             self.assertTrue(isinstance(response_data, dict))
             self.assertIn("id", response_data)
-            self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+            self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
             self.assertEqual(response_data['name'], 'rest-api-test')
             self.assertEqual(response_data['title'], 'Rest apí test')
             self.assertEqual(response_data['iwidgets'], [])
@@ -1538,7 +1592,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertEqual(response_data['name'], 'ExistingTab')
         self.assertEqual(response_data['visible'], True)
         self.assertTrue('preferences' in response_data)
@@ -1566,7 +1620,7 @@ class ApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue('id' in response_data)
-        self.assertTrue(isinstance(response_data["id"], six.text_type))  # id must be an string
+        self.assertTrue(isinstance(response_data["id"], str))  # id must be an string
         self.assertEqual(response_data['name'], 'Tab')
         self.assertTrue('preferences' in response_data)
         self.assertTrue(isinstance(response_data['preferences'], dict))
@@ -3465,6 +3519,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase, TransactionTestCase):
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'extra_wiring_test_data')
     tags = ('wirecloud-rest-api', 'wirecloud-extra-rest-api', 'wirecloud-noselenium')
     populate = False
+    use_search_indexes = False
 
     def test_iwidget_collection_get_requires_authentication(self):
 
